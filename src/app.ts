@@ -3,56 +3,57 @@ import { ITaskListData } from './types';
 import { TaskList } from './components/TaskList';
 import { Tools } from './components/Tools';
 import { TaskForm } from './components/TaskForm';
-
-const arr: ITaskListData = [
-  {
-    name: 'TODO1',
-    content: 'I todo1',
-  },
-  {
-    name: 'TODO2',
-    content: 'I todo2',
-  },
-  {
-    name: 'TODO3',
-    content: 'I todo3',
-  },
-];
+import { TodoModel } from './todoModel';
 
 export class App extends Control {
   taskList: TaskList;
   tools: Tools;
+  model: TodoModel;
 
-  constructor(paretNode: HTMLElement) {
+  constructor(paretNode: HTMLElement, model: TodoModel) {
     super(paretNode);
+
+    this.model = model;
+    this.update = this.update.bind(this);
+
+    model.onUpdateTodoList.add(this.update);
+
     this.tools = new Tools(this.node);
     this.tools.onAddClick = () => {
-      arr.push({
-        name: 'TODO4',
-        content: 'I todo4',
-      });
-      this.update(arr);
+      model
+        .create({
+          name: 'Your TODO name',
+          content: 'Your TODO content',
+        })
+        .then((_) => this.update(model.todoList));
     };
+
     this.taskList = new TaskList(this.node);
 
     this.taskList.onEditClick = (index) => {
-      const form = new TaskForm(this.node, arr[index]);
+      const form = new TaskForm(this.node, model.todoList[index]);
+
       form.onOk = (data) => {
         form.destroy();
-        arr[index] = data;
-        this.update(arr);
+        model
+          .update({ index: index, ...data })
+          .then((_) => this.update(model.todoList));
       };
+
       form.onCancel = () => form.destroy();
     };
 
     this.taskList.onDeleteClick = (index) => {
-      arr.splice(index, 1);
-      this.update(arr);
+      model.delete({ index: index }).then((_) => this.update(model.todoList));
     };
-    this.update(arr);
   }
 
   update(data: ITaskListData) {
     this.taskList.update(data);
+  }
+
+  destroy() {
+    this.model.onUpdateTodoList.remove(this.update);
+    super.destroy();
   }
 }

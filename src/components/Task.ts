@@ -14,8 +14,15 @@ export class Task extends Control {
     super(paretNode, 'div', 'task');
     this.taskName = new Control(this.node, 'div', 'task-name');
     this.taskContent = new Control(this.node, 'div', 'task-content');
-    this.editBtn = new Control(this.node, 'button', 'edit-btn', 'Edit');
-    this.deleteBtn = new Control(this.node, 'button', 'delete-btn', 'Delete');
+
+    const buttons = new Control(this.node, 'div', 'buttons');
+    this.editBtn = new Control(buttons.node, 'button', 'edit-btn', 'Edit');
+    this.deleteBtn = new Control(
+      buttons.node,
+      'button',
+      'delete-btn',
+      'Delete'
+    );
 
     this.editBtn.node.onclick = () => this.onEditClick();
     this.deleteBtn.node.onclick = () => this.onDeleteClick();
