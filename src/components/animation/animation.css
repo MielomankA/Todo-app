@@ -1,0 +1,19 @@
+.animation-btn {
+  display: flex;
+  transition-duration: 1s;
+}
+
+.animation-btn-hidden {
+  transform: scale(0);
+}
+
+.animation-counter {
+  width: 600px;
+  height: 150px;
+  background-color: brown;
+  transition-duration: 1s;
+}
+
+.animation-counter-hidden {
+  transform: scale(0);
+}
